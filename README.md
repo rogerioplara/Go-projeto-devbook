@@ -6,7 +6,6 @@ Serão desenvolvidos 2 componentes para a aplicação:
 
 ## Estrutura da aplicação
 ### USUÁRIOS
-```
 - CRUD
 - Seguir outro usuário
 - Parar de seguir outro usuário
@@ -17,34 +16,27 @@ Serão desenvolvidos 2 componentes para a aplicação:
 Tabelas
 - Usuários
 - Seguidores
-```
 
 ### PUBLICAÇÕES
-```
 - CRUD
 - Buscar publicações de acordo com os usuários que segue
 - Curtir publicações
-```
 
 ### PACOTES
 Os pacotes da aplicação podem ser divididos em dois tipos:
 
 
 #### Pacotes Principais
-```
 - Main
 - Router
 - Controllers
 - Modelos
 - Repositórios
-```
 
 #### Pacotes Auxiliares
-```
 - Config
 - Banco (abrir conexão)
 - Autenticação
 - Middleware
 - Segurança
 - Respostas
-```
