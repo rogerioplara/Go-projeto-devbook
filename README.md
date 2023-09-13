@@ -27,7 +27,6 @@ Tabelas
 ```
 
 ### PACOTES
-
 Os pacotes da aplicação podem ser divididos em dois tipos:
 
 
