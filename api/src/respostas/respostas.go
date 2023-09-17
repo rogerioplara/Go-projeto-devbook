@@ -12,6 +12,8 @@ Esse pacote cuidará do retorno de respostas mais adequadas
 
 // JSON é a função de resposta -> recebe o statusCode, inserir esse statusCode no header. Por fim, pegar os dados que são genéricos e transformar para JSON
 func JSON(w http.ResponseWriter, statusCode int, dados interface{}) {
+	// definir como será recebido o valor -> content type
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 
 	if erro := json.NewEncoder(w).Encode(dados); erro != nil {
