@@ -26,6 +26,12 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Roda as validações do usuário e retorna erro caso falhe
+	if erro = usuario.Preparar(); erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
 	// Conexão com o banco de dados -> inserção feita pelo pacote repositorios
 	db, erro := database.Conectar()
 	if erro != nil {
