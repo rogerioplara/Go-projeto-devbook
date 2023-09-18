@@ -4,6 +4,8 @@ import (
 	"errors"
 	"strings"
 	"time"
+
+	"github.com/badoux/checkmail"
 )
 
 // Usuário representa um usuário utilizando a aplicação
@@ -32,12 +34,20 @@ func (usuario *Usuario) validar(etapa string) error {
 	if usuario.Nome == "" {
 		return errors.New("o nome é obrigatório")
 	}
+
 	if usuario.Nick == "" {
 		return errors.New("o nick é obrigatório")
 	}
+
 	if usuario.Email == "" {
-		return errors.New("o email é obrigatório")
+		return errors.New("o email é obrigatório e não pode estar em branco")
 	}
+
+	// Validação do email com o package github.com/badoux/checkmail
+	if erro := checkmail.ValidateFormat(usuario.Email); erro != nil {
+		return errors.New("o e-mail inserido é inválido")
+	}
+
 	// Condição etapa verifica se a etapa é de cadastro, impedindo assim o cadastro da senha vazia
 	// Essa condição serve para realizar a atualização do cadastro e senha por rotas diferentes
 	if etapa == "cadastro" && usuario.Senha == "" {
