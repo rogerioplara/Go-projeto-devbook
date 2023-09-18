@@ -16,9 +16,9 @@ type Usuario struct {
 	CriadoEm time.Time `json:"CriadoeEm,omitempty"`
 }
 
-func (usuario *Usuario) Preparar() error {
+func (usuario *Usuario) Preparar(etapa string) error {
 	// Se houver erro na validação, retorna o erro
-	if erro := usuario.validar(); erro != nil {
+	if erro := usuario.validar(etapa); erro != nil {
 		return erro
 	}
 
@@ -28,7 +28,7 @@ func (usuario *Usuario) Preparar() error {
 }
 
 // Validar verifica se os campos passados não estão vazios
-func (usuario *Usuario) validar() error {
+func (usuario *Usuario) validar(etapa string) error {
 	if usuario.Nome == "" {
 		return errors.New("o nome é obrigatório")
 	}
@@ -38,7 +38,9 @@ func (usuario *Usuario) validar() error {
 	if usuario.Email == "" {
 		return errors.New("o email é obrigatório")
 	}
-	if usuario.Senha == "" {
+	// Condição etapa verifica se a etapa é de cadastro, impedindo assim o cadastro da senha vazia
+	// Essa condição serve para realizar a atualização do cadastro e senha por rotas diferentes
+	if etapa == "cadastro" && usuario.Senha == "" {
 		return errors.New("a senha é obrigatória")
 	}
 
