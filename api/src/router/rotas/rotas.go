@@ -20,6 +20,7 @@ type Rota struct {
 // Configurar recebe o router sem nenhuma rota dentro e configura todas as rotas e retorna o router pronto
 func Configurar(r *mux.Router) *mux.Router {
 	rotas := rotasUsuarios
+	rotas = append(rotas, rotaLogin)
 
 	// Insere cada rota já definida dentro do router
 	for _, rota := range rotas {
