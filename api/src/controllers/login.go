@@ -5,6 +5,7 @@ import (
 	"api/src/models"
 	"api/src/repositorios"
 	"api/src/respostas"
+	"api/src/seguranca"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -38,5 +39,18 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 
 	// Buscando o usuário por email
-	usuarioSalvoNoBanco := repositorio.BuscarPorEmail()
+	usuarioSalvoNoBanco, erro := repositorio.BuscarPorEmail(usuario.Email)
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	// verifica se a senha do usuário salvo no banco é igual a senha que foi passada (hash)
+	if erro = seguranca.VerificarSenha(usuarioSalvoNoBanco.Senha, usuario.Senha); erro != nil {
+		respostas.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
+	w.Write([]byte("Você está logado, Parabéns!"))
+
 }
