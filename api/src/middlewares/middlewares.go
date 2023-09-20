@@ -1,7 +1,8 @@
 package middlewares
 
 import (
-	"fmt"
+	"api/src/autenticacao"
+	"api/src/respostas"
 	"log"
 	"net/http"
 )
@@ -24,7 +25,10 @@ func Logger(next http.HandlerFunc) http.HandlerFunc {
 func Autenticar(next http.HandlerFunc) http.HandlerFunc {
 	// recebe uma função e retorna outra função, que atende aos requisitos da rota
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Autenticando...")
+		if erro := autenticacao.ValidarToken(r); erro != nil {
+			respostas.Erro(w, http.StatusUnauthorized, erro)
+			return
+		}
 		next(w, r)
 	}
 
