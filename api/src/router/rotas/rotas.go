@@ -1,6 +1,7 @@
 package rotas
 
 import (
+	"api/src/middlewares"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -24,7 +25,15 @@ func Configurar(r *mux.Router) *mux.Router {
 
 	// Insere cada rota já definida dentro do router
 	for _, rota := range rotas {
-		r.HandleFunc(rota.URI, rota.Funcao).Methods(rota.Metodo)
+
+		// aplicar a autenticação e logger via middleware
+		// Chama primeiro o middleware de logger, depois chama de autenticação, depois a rota
+		if rota.RequerAutenticacao {
+			r.HandleFunc(rota.URI, middlewares.Logger(middlewares.Autenticar(rota.Funcao))).Methods(rota.Metodo)
+		} else {
+			r.HandleFunc(rota.URI, middlewares.Logger(rota.Funcao)).Methods(rota.Metodo)
+		}
+
 	}
 
 	return r
