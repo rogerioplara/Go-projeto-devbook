@@ -7,35 +7,35 @@ import (
 
 // Representação de todas as rotas de usuários dentro do sistema
 var rotasUsuarios = []Rota{
-	// Create Usuario
+	// Create Usuario - POST
 	{
 		URI:                "/usuarios",
 		Metodo:             http.MethodPost,
 		Funcao:             controllers.CriarUsuario,
 		RequerAutenticacao: false,
 	},
-	// Read Usuarios
+	// Read Usuarios - GET
 	{
 		URI:                "/usuarios",
 		Metodo:             http.MethodGet,
 		Funcao:             controllers.BuscarUsuarios,
 		RequerAutenticacao: true,
 	},
-	// Read Usuario{id}
+	// Read Usuario{id} - GET
 	{
 		URI:                "/usuarios/{usuarioId}",
 		Metodo:             http.MethodGet,
 		Funcao:             controllers.BuscarUsuario,
 		RequerAutenticacao: true,
 	},
-	// Update Usuario{id}
+	// Update Usuario{id} - PUT
 	{
 		URI:                "/usuarios/{usuarioId}",
 		Metodo:             http.MethodPut,
 		Funcao:             controllers.AtualizarUsuario,
 		RequerAutenticacao: true,
 	},
-	// Delete Usuario{id}
+	// Delete Usuario{id} - DELETE
 	{
 		URI:                "/usuarios/{usuarioId}",
 		Metodo:             http.MethodDelete,
