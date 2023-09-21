@@ -225,3 +225,74 @@ func (repositorio usuarios) BuscarSeguidores(usuarioID uint64) ([]models.Usuario
 	// retorna o resultado em um slice de struct, sem erro
 	return usuarios, nil
 }
+
+// BuscarSeguidores traz todos que um determinado usuário está seguindo
+func (repositorio usuarios) BuscarSeguindo(usuarioID uint64) ([]models.Usuario, error) {
+	linhas, erro := repositorio.db.Query(`
+		SELECT u.id, u.nome, u.nick, u.email, u.criadoEm
+		FROM usuarios u INNER JOIN seguidores s ON u.id = s.usuario_id 
+		WHERE s.seguidor_id = ?
+	`, usuarioID)
+	if erro != nil {
+		return nil, erro
+	}
+	defer linhas.Close()
+
+	// criação do slice de usuários para armazenar os resultados da pesquisa
+	var usuarios []models.Usuario
+
+	// para cada resultado encontrado, inserir dentro do slice de pesquisa com seus respectivos valores
+	for linhas.Next() {
+		var usuario models.Usuario
+
+		if erro = linhas.Scan(
+			&usuario.ID,
+			&usuario.Nome,
+			&usuario.Nick,
+			&usuario.Email,
+			&usuario.CriadoEm,
+		); erro != nil {
+			return nil, erro
+		}
+
+		usuarios = append(usuarios, usuario)
+	}
+
+	// retorna o resultado em um slice de struct, sem erro
+	return usuarios, nil
+}
+
+// BuscarSenha traz a senha de um usuário pelo ID
+func (repositorio usuarios) BuscarSenha(usuarioID uint64) (string, error) {
+	linha, erro := repositorio.db.Query("select senha from usuarios where id = ?", usuarioID)
+	if erro != nil {
+		return "", erro
+	}
+	defer linha.Close()
+
+	var usuario models.Usuario
+
+	if linha.Next() {
+		if erro = linha.Scan(&usuario.Senha); erro != nil {
+			return "", erro
+		}
+	}
+
+	return usuario.Senha, nil
+
+}
+
+// Atualizar senha altera a senha do usuário
+func (repositorio usuarios) AtualizarSenha(usuarioID uint64, senha string) error {
+	statement, erro := repositorio.db.Prepare("update usuarios set senha = ? where id = ?")
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(senha, usuarioID); erro != nil {
+		return erro
+	}
+
+	return nil
+}
