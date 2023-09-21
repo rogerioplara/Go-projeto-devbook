@@ -108,9 +108,9 @@ func (repositorio usuarios) BuscarPorID(ID uint64) (models.Usuario, error) {
 }
 
 // Atualizar altera as informações de um usuário no banco de dados - recebe o ID e o struct de usuário, retorna um erro se existir
-func (repositorios usuarios) Atualizar(ID uint64, usuario models.Usuario) error {
+func (repositorio usuarios) Atualizar(ID uint64, usuario models.Usuario) error {
 	// Statement SQL
-	statement, erro := repositorios.db.Prepare("update usuarios set nome = ?, nick = ?, email = ? where id = ?")
+	statement, erro := repositorio.db.Prepare("update usuarios set nome = ?, nick = ?, email = ? where id = ?")
 	if erro != nil {
 		return erro
 	}
@@ -125,8 +125,8 @@ func (repositorios usuarios) Atualizar(ID uint64, usuario models.Usuario) error 
 }
 
 // Deletar apaga as informações de um usuário no banco de dados
-func (repositorios usuarios) Deletar(ID uint64) error {
-	statement, erro := repositorios.db.Prepare("delete from usuarios where id = ?")
+func (repositorio usuarios) Deletar(ID uint64) error {
+	statement, erro := repositorio.db.Prepare("delete from usuarios where id = ?")
 	if erro != nil {
 		return erro
 	}
@@ -140,9 +140,9 @@ func (repositorios usuarios) Deletar(ID uint64) error {
 }
 
 // BuscarPorEmail busca um usuário por email e retorna seu ID e Senha com hash
-func (repositorios usuarios) BuscarPorEmail(email string) (models.Usuario, error) {
+func (repositorio usuarios) BuscarPorEmail(email string) (models.Usuario, error) {
 	// Query string
-	linha, erro := repositorios.db.Query("select id, senha from usuarios where email = ?", email)
+	linha, erro := repositorio.db.Query("select id, senha from usuarios where email = ?", email)
 	if erro != nil {
 		return models.Usuario{}, erro
 	}
@@ -158,4 +158,19 @@ func (repositorios usuarios) BuscarPorEmail(email string) (models.Usuario, error
 	}
 
 	return usuario, nil
+}
+
+// Seguir permite que um usuário siga outro
+func (repositorio usuarios) Seguir(usuarioID, seguidorID uint64) error {
+	statement, erro := repositorio.db.Prepare("insert ignore into seguidores (usuario_id, seguidor_id) values (?, ?)")
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(usuarioID, seguidorID); erro != nil {
+		return erro
+	}
+
+	return nil
 }
