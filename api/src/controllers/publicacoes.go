@@ -65,7 +65,7 @@ func CriarPublicacao(w http.ResponseWriter, r *http.Request) {
 
 // BuscarPublicacoes busca as publicações que apareceriam no feed do usuário
 func BuscarPublicacoes(w http.ResponseWriter, r *http.Request) {
-
+	usuarioID, erro := autenticacao.ExtrairUsuarioID(r)
 }
 
 // BuscarPublicacao busca uma publicação única
