@@ -119,3 +119,54 @@ func (repositorio Publicacoes) Atualizar(publicacaoID uint64, publicacao models.
 
 	return nil
 }
+
+// Deletar exclui uma publicação do banco de dados
+func (repositorio Publicacoes) Deletar(publicacaoID uint64) error {
+	statement, erro := repositorio.db.Prepare("delete from publicacoes where id = ?")
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(publicacaoID); erro != nil {
+		return erro
+	}
+
+	return nil
+}
+
+// BuscarPorUsuario traz todas as publicações de um usuário específico
+func (repositorio Publicacoes) BuscarPorUsuario(usuarioID uint64) ([]models.Publicacao, error) {
+	linhas, erro := repositorio.db.Query(`
+	select p.*, u.nick from publicacoes p
+	join usuarios u on u.id = p.autor_id
+	where p.autor_id = ?
+	`, usuarioID)
+
+	if erro != nil {
+		return nil, erro
+	}
+	defer linhas.Close()
+
+	var publicacoes []models.Publicacao
+
+	for linhas.Next() {
+		var publicacao models.Publicacao
+
+		if erro = linhas.Scan(
+			&publicacao.ID,
+			&publicacao.Titulo,
+			&publicacao.Conteudo,
+			&publicacao.AutorID,
+			&publicacao.Curtidas,
+			&publicacao.CriadaEm,
+			&publicacao.AutorNick,
+		); erro != nil {
+			return nil, erro
+		}
+
+		publicacoes = append(publicacoes, publicacao)
+	}
+
+	return publicacoes, nil
+}
